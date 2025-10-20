@@ -1,7 +1,7 @@
 #include <Arduino.h>
 /*************************************************************
    Monitoracão de Poço Artesiano - Espressif - ESP32 DEVKIT V1
-   11.10.2025
+   19.10.2025
 
   Blynk library is licensed under MIT license
  *************************************************************
@@ -123,6 +123,7 @@ BLYNK_WRITE(V14){                            // quando aperta = 1; solta = 0
 }
 
 void LoraCOMM(){
+  //                      RADIO LORA SLAVE 1
 
   // LORA - Leitura de ruido
   uint16_t NOISE_ID0 = lora.getNoise(0, 1);     // requisita ruido do Master
@@ -160,9 +161,8 @@ void LoraCOMM(){
   }
   
   Serial.println("====================================================="); 
-
   delay(2000);
-  //___________________________________________________________________________________
+  //                      RADIO LORA SLAVE 2
 
   // LORA - Status digital
   bool SlaveGPIO04_2 = lora.digitalRead(2, 4);     // requisita do Slave 2 - GPIO 4
@@ -194,7 +194,10 @@ void LoraCOMM(){
   }
 
   Serial.println("====================================================="); 
+  delay(2000);
 }
+
+//___________________________________________________________________________________________________________
 
 void Main2(){
   unsigned long tempo_start = millis();      // usado no final para imprimir o tempo de execução dessa rotina
@@ -203,12 +206,16 @@ void Main2(){
   //if (currentSec == 59){int i = WDT_TIMEOUT/1000;
   //   while(1){Serial.print("Watchdog vai atuar em... "); Serial.println (i);delay(980);i = i - 1;}}
   
-  if ((currentHour == 6) && (currentMin == 10) && (currentSec < 1)){
+  if ((currentHour == 9) && (currentMin == 30) && (currentSec < 10)){
     preferences.begin  ("my-app", false);              // inicia 
     preferences.putUInt("counterRST", 0);              // grava em Preferences/My-app/counterRST, counterRST
     counterRST = preferences.getUInt("counterRST", 0); // Le da NVS
     preferences.end();
     Serial.println("A data e hora foram recalibradas no relógio interno, e o contador de RESETs foi zerado!");
+
+    CommFail_ID1 = 0;        // zera contador de nr. de falhas
+    CommFail_ID2 = 0;
+
     Blynk.virtualWrite(V45, currentDay, "/", currentMonth, " ", currentHour, ":", currentMin, " Auto calibrado o Relógio");
   }
 
@@ -319,7 +326,7 @@ void setup(){
 
     Serial.println("ID configurado com sucesso!");
 
-    if(!lora.setBPS(BW250, SF9, CR4_7)){
+    if(!lora.setBPS(BW125, SF7, CR4_5)){
       Serial.println("Erro ao configurar bps");
       while(1);
     }
