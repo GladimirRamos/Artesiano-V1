@@ -206,7 +206,7 @@ void Main2(){
   //if (currentSec == 59){int i = WDT_TIMEOUT/1000;
   //   while(1){Serial.print("Watchdog vai atuar em... "); Serial.println (i);delay(980);i = i - 1;}}
   
-  if ((currentHour == 9) && (currentMin == 30) && (currentSec < 10)){
+  if ((currentHour == 10) && (currentMin == 0) && (currentSec < 10)){
     preferences.begin  ("my-app", false);              // inicia 
     preferences.putUInt("counterRST", 0);              // grava em Preferences/My-app/counterRST, counterRST
     counterRST = preferences.getUInt("counterRST", 0); // Le da NVS
@@ -312,7 +312,7 @@ void setup(){
   delay(100);
 
   edgentTimer.setInterval ( 1000L, Main2);        // rotina se repete a cada XXXXL (milisegundos)
-  edgentTimer.setInterval (15000L, LoraCOMM);     // rotina
+  edgentTimer.setInterval (55000L, LoraCOMM);     // rotina
   BlynkEdgent.begin();
 
   Serial_LoRa.begin(9600, SERIAL_8N1, PIN_RX, PIN_TX);
